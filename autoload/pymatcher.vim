@@ -27,7 +27,12 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
     let s:rez = []
     let s:regex = ''
 
-    execute 'python' . (has('python3') ? '3' : '') . ' CtrlPPyMatch()'
+	if exists('g:ctrlp_case_sensitive') && g:ctrlp_case_sensitive == 1
+		execute 'python' . (has('python3') ? '3' : '') . ' CtrlPPyMatch(case=True)'
+	else
+		execute 'python' . (has('python3') ? '3' : '') . ' CtrlPPyMatch()'
+	endif
+
 
     let s:matchregex = '\v\c'
 

@@ -3,7 +3,7 @@ import heapq
 
 _escape = dict((c , "\\" + c) for c in ['^','$','.','{','}','(',')','[',']','\\','/','+'])
 
-def CtrlPPyMatch():
+def CtrlPPyMatch(case=False):
     items = vim.eval('a:items')
     astr = vim.eval('a:str')
     lowAstr = astr.lower()
@@ -33,7 +33,9 @@ def CtrlPPyMatch():
         regex += escaped[-1]
     # because this IGNORECASE flag is extremely expensive we are converting everything to lower case
     # see https://github.com/FelikZ/ctrlp-py-matcher/issues/29
-    regex = regex.lower()
+    if case == False:
+        regex = regex.lower()
+
 
     res = []
     prog = re.compile(regex)
@@ -45,22 +47,24 @@ def CtrlPPyMatch():
         if slashPos != -1:
             line = line[slashPos + 1:]
 
-        lineLower = line.lower()
-        result = prog.search(lineLower)
+        if case == False:
+            line= line.lower()
+        result = prog.search(line)
         if result:
             score = result.end() - result.start() + 1
-            score = score + ( len(lineLower) + 1 ) / 100.0
-            score = score + ( len(line) + 1 ) / 1000.0
+            score = score + ( len(line) + 1 ) / 100.0
+            #  score = score + ( len(line) + 1 ) / 1000.0
             return 1000.0 / score
 
         return 0
 
     def path_score(line):
-        lineLower = line.lower()
-        result = prog.search(lineLower)
+        if case == False:
+            line= line.lower()
+        result = prog.search(line)
         if result:
             score = result.end() - result.start() + 1
-            score = score + ( len(lineLower) + 1 ) / 100.0
+            score = score + ( len(line) + 1 ) / 100.0
             return 1000.0 / score
 
         return 0
